@@ -1,7 +1,7 @@
-use bevy::{prelude::*, render::camera::Projection, window::PrimaryWindow};
-use bevy_egui::{egui, EguiContexts, EguiPlugin};
+use bevy::prelude::*;
+use bevy_egui::{egui, EguiContexts};
 
-use crate::camera::{CameraControlData, OriginalCameraTransform};
+//use crate::camera::{CameraControlData, OriginalCameraTransform};
 
 #[derive(Default, Resource)]
 pub struct OccupiedScreenSpace {

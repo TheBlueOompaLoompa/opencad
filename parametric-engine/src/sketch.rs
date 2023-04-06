@@ -1,43 +1,68 @@
+use bevy::prelude::*;
 use std::vec::Vec;
 
-pub fn create_sketch<'a>(parent_face: &'a mut Face) -> Sketch {
-    Sketch { parent_face: parent_face, faces: vec![], constraints: vec![] }
+#[derive(Bundle)]
+pub struct SketchBundle {
+    pub parent_face: Face,
 }
 
-pub struct Sketch <'a> {
-    pub parent_face: &'a mut Face,
-    pub faces: Vec<Face>,
-    pub constraints: Vec<Constraint>,
+impl SketchBundle {
+    pub fn create_sketch<'a>(parent_face: Face) -> SketchBundle {
+        SketchBundle { parent_face: parent_face }
+    }
 }
 
-pub struct Constraint {
-    pub c_type: ConstraintType, // Sorry, can't use the name type
-    pub targets: Vec<TargetTypes>,
-}
+// TODO: Change componets to sub bundles
 
-pub enum ConstraintType {
-    Horizontal,
-    Vertical,
-}
-
-pub enum TargetTypes {
-    Point,
-    Edge,
-    Face,
-}
-
+#[derive(Component)]
 pub struct Point {
     pub x: f64,
     pub y: f64,
     pub z: Option<f64>
 }
 
+#[derive(Component)]
 pub struct Edge {
     pub points: [Point; 2],
 }
 
+#[derive(Component)]
 pub struct Face {
     pub edges: Vec<Edge>,
 }
+
+
+
+
+
+
+
+
+
+
+
+/*
+impl Face {
+    pub fn xy_base() -> Face {
+        return Face{edges: vec![
+            Edge{points:[
+                Point{x: -1.0, y: -1.0, z: Some(0.0)},
+                Point{x: 1.0, y: -1.0, z: Some(0.0)},
+            ]},
+            Edge{points:[
+                Point{x: 1.0, y: -1.0, z: Some(0.0)},
+                Point{x: 1.0, y: 1.0, z: Some(0.0)},
+            ]},
+            Edge{points:[
+                Point{x: 1.0, y: 1.0, z: Some(0.0)},
+                Point{x: -1.0, y: 1.0, z: Some(0.0)},
+            ]},
+            Edge{points:[
+                Point{x: -1.0, y: 1.0, z: Some(0.0)},
+                Point{x: -1.0, y: -1.0, z: Some(0.0)},
+            ]},
+        ]};
+    }
+}*/
 
 // TODO: Create preset XY XZ YZ Planes

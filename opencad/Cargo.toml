@@ -6,6 +6,8 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-bevy = "0.10.0"
+bevy = "^0.10"
 bevy_egui = "0.20"
+smooth-bevy-cameras = { path = "../smooth-bevy-cameras" }
+bevy_save = "^0.4"
 parametric-engine = { path = "../parametric-engine" }
