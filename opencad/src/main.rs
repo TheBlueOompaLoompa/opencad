@@ -5,7 +5,7 @@ use bevy::{
     render::render_resource::{AsBindGroup, ShaderRef},
 };
 use bevy_egui::{EguiPlugin};
-use parametric_engine::{sketch};
+use parametric_engine::sketch::{SketchBundle, Face};
 use smooth_bevy_cameras::{LookTransformPlugin, controllers::orbit::OrbitCameraPlugin};
 
 mod camera;
@@ -13,7 +13,6 @@ mod ui;
 
 fn main() {
     let mut parent_face = parametric_engine::sketch::Face{edges: vec![]};
-    let _test_sketch = sketch::create_sketch(&mut parent_face);
 
     let main_win = Window {
         title: "OpenCAD".to_string(),

@@ -14,6 +14,10 @@ impl SketchBundle {
 
 // TODO: Change componets to sub bundles
 
+trait Part {
+    fn apply_constraint(&mut self, constraint: Box<dyn Constraint>);
+}
+
 #[derive(Component)]
 pub struct Point {
     pub x: f64,
@@ -31,18 +35,7 @@ pub struct Face {
     pub edges: Vec<Edge>,
 }
 
-
-
-
-
-
-
-
-
-
-
-/*
-impl Face {
+impl Face { // TODO: Create preset XY XZ YZ Planes
     pub fn xy_base() -> Face {
         return Face{edges: vec![
             Edge{points:[
@@ -63,6 +56,27 @@ impl Face {
             ]},
         ]};
     }
-}*/
+}
 
-// TODO: Create preset XY XZ YZ Planes
+impl Part for Point {
+    fn apply_constraint(&mut self, constraint: Box<dyn Constraint>) {
+        constraint.for_point(self);
+    }
+}
+
+trait Constraint {
+    fn for_point(&mut self, point: Point) {}
+    fn for_edge(&mut self, edge: Edge) {}
+    fn for_face(&mut self, face: Face) {}
+}
+
+struct Coincident<'a> {
+    other_point: &'a Point
+}
+
+impl Constraint for Coincident<'_> {
+    fn for_point(&mut self, point: Point) {
+        self.other_point.x = point.x;
+        self.other_point.y = point.y;
+    }
+}

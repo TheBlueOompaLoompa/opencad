@@ -3,7 +3,8 @@ resolver = "2"
 
 members = [
     "opencad",
-    "parametric-engine"
+    "parametric-engine",
+    "smooth-bevy-cameras"
 ]
 
 # Enable a small amount of optimization in debug mode
