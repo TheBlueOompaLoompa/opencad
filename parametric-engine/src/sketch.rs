@@ -12,17 +12,23 @@ impl SketchBundle {
     }
 }
 
-// TODO: Change componets to sub bundles
-
-trait Part {
-    fn apply_constraint(&mut self, constraint: Box<dyn Constraint>);
-}
-
-#[derive(Component)]
+#[derive(Component, PartialEq, Clone, Copy, Debug)]
 pub struct Point {
     pub x: f64,
     pub y: f64,
     pub z: Option<f64>
+}
+impl Point {
+    pub const fn splat(n: f64) -> Self {
+        return Self { x: n, y: n, z: Some(n) }
+    }
+
+    pub const fn splat_2d(n: f64) -> Self {
+        return Self { x: n, y: n, z: None }
+    }
+
+    pub const ZERO: Self = Self::splat(0.0);
+    pub const ZERO_2D: Self = Self::splat_2d(0.0);
 }
 
 #[derive(Component)]
@@ -58,20 +64,14 @@ impl Face { // TODO: Create preset XY XZ YZ Planes
     }
 }
 
-impl Part for Point {
-    fn apply_constraint(&mut self, constraint: Box<dyn Constraint>) {
-        constraint.for_point(self);
-    }
+pub trait Constraint {
+    fn for_point(&mut self, _point: Point) {}
+    fn for_edge(&self, _edge: Edge) {}
+    fn for_face(&self, _face: Face) {}
 }
 
-trait Constraint {
-    fn for_point(&mut self, point: Point) {}
-    fn for_edge(&mut self, edge: Edge) {}
-    fn for_face(&mut self, face: Face) {}
-}
-
-struct Coincident<'a> {
-    other_point: &'a Point
+pub struct Coincident<'a>{
+    pub other_point: &'a mut Point
 }
 
 impl Constraint for Coincident<'_> {
@@ -79,4 +79,15 @@ impl Constraint for Coincident<'_> {
         self.other_point.x = point.x;
         self.other_point.y = point.y;
     }
+}
+
+#[test]
+fn coincident_constraint() {
+    let p1 = Point::ZERO_2D;
+    let mut p2 = Point::splat_2d(1.0);
+
+    let mut t = Coincident { other_point: &mut p2 };
+    t.for_point(p1);
+
+    assert!(p1 == p2);
 }
