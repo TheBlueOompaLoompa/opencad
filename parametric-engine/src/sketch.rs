@@ -31,14 +31,15 @@ impl Point {
     pub const ZERO_2D: Self = Self::splat_2d(0.0);
 }
 
-#[derive(Component)]
+#[derive(Component, PartialEq, Clone, Copy, Debug)]
 pub struct Edge {
     pub points: [Point; 2],
 }
 
-#[derive(Component)]
+#[derive(Component, PartialEq, Clone, Debug)]
 pub struct Face {
     pub edges: Vec<Edge>,
+    pub base: bool
 }
 
 impl Face { // TODO: Create preset XY XZ YZ Planes
@@ -60,34 +61,70 @@ impl Face { // TODO: Create preset XY XZ YZ Planes
                 Point{x: -1.0, y: 1.0, z: Some(0.0)},
                 Point{x: -1.0, y: -1.0, z: Some(0.0)},
             ]},
-        ]};
+        ], base: true };
     }
 }
 
 pub trait Constraint {
-    fn for_point(&mut self, _point: Point) {}
-    fn for_edge(&self, _edge: Edge) {}
-    fn for_face(&self, _face: Face) {}
+    fn for_point(&mut self, _point: &mut Point) {}
+    fn for_edge(&mut self, _edge: &mut Edge) {}
+    fn for_face(&mut self, _face: &mut Face) {}
 }
 
-pub struct Coincident<'a>{
+pub struct Coincident<'a> {
     pub other_point: &'a mut Point
 }
 
 impl Constraint for Coincident<'_> {
-    fn for_point(&mut self, point: Point) {
+    fn for_point(&mut self, point: &mut Point) {
         self.other_point.x = point.x;
         self.other_point.y = point.y;
     }
 }
 
+pub struct Horizontal {}
+pub struct Vertical {}
+
+impl Constraint for Horizontal {
+    fn for_edge(&mut self, edge: &mut Edge) {
+        edge.points[0].y = edge.points[1].y;
+    }
+}
+
+impl Constraint for Vertical {
+    fn for_edge(&mut self, edge: &mut Edge) {
+        edge.points[0].x = edge.points[1].x;
+    }
+}
+
 #[test]
 fn coincident_constraint() {
-    let p1 = Point::ZERO_2D;
+    let mut p1 = Point::ZERO_2D;
     let mut p2 = Point::splat_2d(1.0);
 
     let mut t = Coincident { other_point: &mut p2 };
-    t.for_point(p1);
+    t.for_point(&mut p1);
 
     assert!(p1 == p2);
+}
+
+#[test]
+fn dir_constraint() {
+    let mut edge = Edge {
+        points: [
+            Point{x: 0.0, y: 0.0, z: Some(0.0)},
+            Point{x: 1.0, y: 1.0, z: Some(0.0)},
+        ]
+    };
+
+    let mut h = Horizontal {};
+    let mut v = Vertical {};
+
+    h.for_edge(&mut edge);
+
+    assert!(edge.points[0].y == edge.points[1].y);
+
+    v.for_edge(&mut edge);
+
+    assert!(edge.points[0].x == edge.points[1].x);
 }

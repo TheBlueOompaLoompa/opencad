@@ -1,11 +1,10 @@
 use bevy::{
     prelude::*,
-    render::{camera::ScalingMode, view::ColorGrading}
+    render::{camera::ScalingMode}
 };
 
 use smooth_bevy_cameras::{
-    controllers::orbit::{OrbitCameraBundle, OrbitCameraController, OrbitCameraPlugin},
-    LookTransformPlugin,
+    controllers::orbit::{OrbitCameraBundle, OrbitCameraController},
 };
 
 #[derive(Default, Resource)]
@@ -46,16 +45,4 @@ pub fn setup_camera_controller(
             Vec3::new(0., 0., 0.),
             Vec3::Y,
         ));
-
-    /*commands.spawn(OrbitCameraBundle::new(
-        OrbitCameraController {
-            smoothing_weight: 0.0,
-            mouse_rotate_sensitivity:  Vec2::splat(0.3),
-            mouse_translate_sensitivity:  Vec2::splat(0.3),
-            ..default()
-        },
-        camera_control_data.transform.translation,
-        camera_control_data.target,
-        Vec3::Y,
-    ));*/
 }

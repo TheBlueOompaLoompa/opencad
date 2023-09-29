@@ -20,16 +20,21 @@ pub fn ui_system(
     occupied_screen_space.top =  egui::TopBottomPanel::top("main_tools")
         .default_height(64.0)
         .show(ctx, |ui| {
-            egui::menu::bar(ui, |ui| {
-                egui::menu::menu_button(ui, "File", |ui| {
-                    if ui.button("New").clicked() {
-
-                    } else if ui.button("Save").clicked() {
-
-                    } else if ui.button("Quit").clicked() {
-                        std::process::exit(0);
-                    }
+            ui.vertical(|ui| {
+                egui::menu::bar(ui, |ui| {
+                    egui::menu::menu_button(ui, "File", |ui| {
+                        if ui.button("New").clicked() {
+                            println!("New");
+                        } else if ui.button("Save").clicked() {
+                            println!("Save");
+                        } else if ui.button("Quit").clicked() {
+                            std::process::exit(0);
+                        }
+                    });
                 });
+                if ui.button("Create Sketch").clicked() {
+                    println!("Create Sketch");
+                }
             });
         })
         .response

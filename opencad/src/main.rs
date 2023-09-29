@@ -12,7 +12,7 @@ mod camera;
 mod ui;
 
 fn main() {
-    let mut parent_face = parametric_engine::sketch::Face{edges: vec![]};
+    let mut _parent_face = Face::xy_base();
 
     let main_win = Window {
         title: "OpenCAD".to_string(),
@@ -46,9 +46,8 @@ fn setup(
     mut commands: Commands,
     mut meshes: ResMut<Assets<Mesh>>,
     mut cad_materials: ResMut<Assets<CadMaterial>>,
-    mut materials: ResMut<Assets<StandardMaterial>>,
 ) {
-    let material = cad_materials.add(CadMaterial { camera_look_vec: Vec4::ZERO });
+    let material = cad_materials.add(CadMaterial { camera_look_vec: Vec4::ZERO, scale: 1.0 });
 
     // cube
     commands.spawn( MaterialMeshBundle {
@@ -71,16 +70,14 @@ fn setup(
 }
 
 fn cad_shade(
-    cam_query: Query<&Transform, With<Camera>>,
+    cam_query: Query<(&Transform, &OrthographicProjection), With<Camera>>,
     mut mat_obj: ResMut<Assets<CadMaterial>>
 ) {
-    let mut dir: Vec3 = Vec3::ZERO;
-    for transform in cam_query.into_iter() {
-        dir = transform.back();
-    }
-
     for (_, mat) in mat_obj.iter_mut() {
-        mat.camera_look_vec = Vec4::new(dir.x, dir.y, dir.z, 1.0);
+        for (transform, prj) in cam_query.into_iter() {
+            mat.camera_look_vec = Vec4::new(transform.back().x, transform.back().y, transform.back().z, 1.0);
+            mat.scale = prj.scale;
+        }
     }
 }
 
@@ -90,6 +87,8 @@ fn cad_shade(
 pub struct CadMaterial {
     #[uniform(0)]
     camera_look_vec: Vec4,
+    #[uniform(1)]
+    scale: f32
 }
 
 impl Material for CadMaterial {
