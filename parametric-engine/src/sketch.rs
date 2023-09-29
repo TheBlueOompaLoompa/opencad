@@ -1,7 +1,5 @@
-use bevy::prelude::*;
 use std::vec::Vec;
 
-#[derive(Bundle)]
 pub struct SketchBundle {
     pub parent_face: Face,
 }
@@ -12,7 +10,7 @@ impl SketchBundle {
     }
 }
 
-#[derive(Component, PartialEq, Clone, Copy, Debug)]
+#[derive(PartialEq, Clone, Copy, Debug)]
 pub struct Point {
     pub x: f64,
     pub y: f64,
@@ -31,12 +29,10 @@ impl Point {
     pub const ZERO_2D: Self = Self::splat_2d(0.0);
 }
 
-#[derive(Component)]
 pub struct Edge {
     pub points: [Point; 2],
 }
 
-#[derive(Component)]
 pub struct Face {
     pub edges: Vec<Edge>,
 }
